@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DoCheck, OnChanges, SimpleChanges } from '@angular/core';
+import { PokemonResumido } from 'src/app/Models/pokemon-resumido.model';
+import { Pokemon } from 'src/app/Models/pokemon.model';
+import { RequisicaoPokemons } from 'src/app/Models/requisicao-pokemons.model';
+import { PokemonService } from 'src/app/Service/pokemon.service';
 
 @Component({
   selector: 'app-display',
@@ -7,9 +11,44 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DisplayComponent implements OnInit {
 
-  constructor() { }
+  public pokemonsRequisicao: Array<RequisicaoPokemons> = [];
+  public pokemonsResumidos: Array<PokemonResumido> = [];
+  public arrayResults: any[] = []
+  public pokemonsParaCard: Array<Pokemon> = [];
+  public pokemonsCard: Array<Object> = [];
+  constructor(private pokemonService: PokemonService) { }
+
 
   ngOnInit(): void {
+    this.RetornaPokemons();
   }
 
+
+
+  public RetornaPokemons(){
+      this.pokemonService.retornaPokemonsResumido().subscribe((pokemonreq: any[]) => {
+      this.arrayResults = pokemonreq;
+
+      const linksPokemons = JSON.parse(JSON.stringify(Object.assign({}, this.arrayResults)))
+
+      console.log(linksPokemons.results);
+      if(linksPokemons != ""){
+        this.pokemonsResumidos = linksPokemons.results;
+      }
+      
+      for(var i = 0; i < this.pokemonsResumidos.length; i++){
+        this.ConvertePokemonsParaCard(this.pokemonsResumidos[i]);
+        
+      }
+      
+    })
+  }  
+  
+
+  public ConvertePokemonsParaCard(pokemonResumido: PokemonResumido) {
+    this.pokemonService.retornaPokemonCompletoCard(pokemonResumido.url).subscribe((result: any[]) => {
+        const pokemonObj = JSON.parse(JSON.stringify(Object.assign({}, result)))     
+        this.pokemonsParaCard.push(new Pokemon(pokemonObj.id, pokemonObj.name, pokemonObj.height, pokemonObj.weight, pokemonObj.sprites.other.dream_world.front_default))   
+    })
+  }
 }
