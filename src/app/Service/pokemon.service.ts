@@ -37,5 +37,23 @@ export class PokemonService {
     }
 
 
-  
+    retornaPokemonPesquisa(pesquisaPokemon: string): Observable<any> {
+        return this.httpclient.get<any>(this.url + pesquisaPokemon)
+        .pipe(
+            retry(2),
+            catchError(this.handleError)
+        )
+    }
+
+    handleError(error: HttpErrorResponse) {
+        let errorMessage = '';
+
+        if(error.error instanceof ErrorEvent){
+            errorMessage = error.error.message;
+        }else{
+            errorMessage = `Código de erro: ${error.status}, ` + `mensagem: ${error.message}`;
+        }
+        console.log(errorMessage);
+        return throwError(errorMessage);
+    };
 }

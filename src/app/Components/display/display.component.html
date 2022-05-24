@@ -1,5 +1,5 @@
 <div class="conteiner">
-    <div class="d-flex">
+    <div class="d-flex" id="gradePokemons" *ngIf="!pokemonsPesquisaUnitaria; else cardPesquisaUnitaria">
         <div class="row">
             <div *ngFor=" let pokemon of pokemonsParaCard" id="card" class="d-flex flex-column mt-2 mx-2">
                 <div id="cardTitle" class="p-2 align-middle">
@@ -15,4 +15,19 @@
             </div>
         </div>
     </div>
+
+    <ng-template #cardPesquisaUnitaria >
+        <div id="card" class="d-flex flex-column mt-2 mx-2">
+            <div id="cardTitle" class="p-2 align-middle">
+                <h2>{{pokemonPesquisaRetorno.name}}</h2>
+            </div>
+            <div id="cardBody" class="p-2">
+                <img id="pokemonArt" src="{{pokemonPesquisaRetorno.avatar}}">
+            </div>
+            <div id="cardfooter" class="p-2">
+                <p>Peso: {{pokemonPesquisaRetorno.height}}</p>
+                <p>N°: {{pokemonPesquisaRetorno.id}}</p>
+            </div>
+        </div>
+    </ng-template>
 </div>
